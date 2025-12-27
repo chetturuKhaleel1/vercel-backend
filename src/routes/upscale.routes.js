@@ -4,11 +4,13 @@ import path from 'path';
 import { createUpscaleJob, getJobStatus } from '../services/upscale.service.js';
 import { v4 as uuidv4 } from 'uuid';
 
+import { UPLOAD_DIR } from "../utils/storage.js";
+
 const router = express.Router();
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'src/uploads/');
+        cb(null, UPLOAD_DIR);
     },
     filename: (req, file, cb) => {
         cb(null, `${uuidv4()}${path.extname(file.originalname)}`);
@@ -49,7 +51,7 @@ router.get('/download/:jobId', (req, res) => {
 
     // Extract filename from outputUrl
     const filename = path.basename(job.outputUrl);
-    const filePath = path.join(path.resolve(), 'src/uploads/processed', filename);
+    const filePath = path.join(UPLOAD_DIR, 'processed', filename);
 
     res.download(filePath, filename); // Set Content-Disposition: attachment
 });

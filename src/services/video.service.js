@@ -2,6 +2,7 @@
 import fs from "fs";
 import path from "path";
 import Job from "../models/job.model.js";
+import { UPLOAD_DIR } from "../utils/storage.js";
 
 import { extractFrames } from "./frameExtractor.service.js";
 import { runWhisper } from "./whisper.service.js";
@@ -17,26 +18,20 @@ export async function runJob(jobId) {
 
   await Job.updateOne({ jobId }, { status: "processing", progress: 5 });
 
+  // ... inside runJob ...
   // ----------------------------------------------------
   // 1) FIX VIDEO PATH
   // ----------------------------------------------------
   let videoFsPath = job.filePath;
-  console.log(`🔍 Debug Path Resolution: CWD=${process.cwd()} | Raw=${videoFsPath}`);
+  console.log(`🔍 Debug Path Resolution: UPLOAD_DIR=${UPLOAD_DIR} | Raw=${videoFsPath}`);
 
-  // If path is relative (starts with uploads or src/uploads), make it absolute
+  // If path is absolute, use it. If not, assume it's in UPLOAD_DIR.
   if (!path.isAbsolute(videoFsPath)) {
-    // Remove leading slash if present
-    if (videoFsPath.startsWith("/") || videoFsPath.startsWith("\\")) {
-      videoFsPath = videoFsPath.slice(1);
-    }
+    // Strip leading src/uploads or uploads if present to avoid duplication
+    videoFsPath = videoFsPath.replace(/^(src\/)?uploads[\/\\]?/, "");
 
-    // If it already starts with src, join with projectRoot
-    if (videoFsPath.startsWith("src")) {
-      videoFsPath = path.join(projectRoot, videoFsPath);
-    } else {
-      // Otherwise assume it's in src/ (e.g. uploads/...)
-      videoFsPath = path.join(projectRoot, "src", videoFsPath);
-    }
+    // Join with UPLOAD_DIR
+    videoFsPath = path.join(UPLOAD_DIR, videoFsPath);
   }
 
   videoFsPath = path.resolve(videoFsPath).replace(/\\/g, "/");

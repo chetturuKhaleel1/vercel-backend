@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
+import { UPLOAD_DIR, SLIDES_DIR } from "./utils/storage.js";
 
 import processRouter from "./routes/process.routes.js";
 import slideRoutes from "./routes/slide.route.js";
@@ -23,14 +24,14 @@ const projectRoot = path.resolve();
 // Directory: src/uploads
 app.use(
   "/uploads",
-  express.static(path.join(projectRoot, "src", "uploads"))
+  express.static(UPLOAD_DIR)
 );
 
 // 2) AI-generated slide PDFs
 // Directory: src/uploads/slides
 app.use(
   "/slides",
-  express.static(path.join(projectRoot, "src", "uploads", "slides"))
+  express.static(SLIDES_DIR)
 );
 
 // DO NOT SERVE PROJECT ROOT (security risk)

@@ -5,13 +5,14 @@ import ffmpeg from 'fluent-ffmpeg';
 import { v4 as uuidv4 } from 'uuid';
 import { fileURLToPath } from 'url';
 
+import { UPLOAD_DIR } from '../utils/storage.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const jobs = {};
 
-const UPLOAD_DIR = path.join(__dirname, '../uploads');
-const PROCESSED_DIR = path.join(__dirname, '../uploads/processed');
+const PROCESSED_DIR = path.join(UPLOAD_DIR, 'processed');
 const WORKER_PATH = path.join(__dirname, '../workers/upscaleWorker.js');
 
 if (!fs.existsSync(PROCESSED_DIR)) fs.mkdirSync(PROCESSED_DIR, { recursive: true });

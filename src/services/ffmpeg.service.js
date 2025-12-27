@@ -1,13 +1,14 @@
 import fs from "fs";
 import path from "path";
 import ffmpeg from "fluent-ffmpeg";
+import { UPLOAD_DIR } from "../utils/storage.js";
 
 function abs(p) {
   return path.resolve(p).replace(/\\/g, "/");
 }
 
 export async function extractFrames(videoPath, jobId) {
-  const folder = abs(path.join("server/src/uploads", `${jobId}-frames`));
+  const folder = path.join(UPLOAD_DIR, `${jobId}-frames`);
   if (!fs.existsSync(folder)) fs.mkdirSync(folder, { recursive: true });
 
   const inputVideo = abs(videoPath);

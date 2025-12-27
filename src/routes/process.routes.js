@@ -6,16 +6,15 @@ import { startProcess, startProcessFromURL } from "../controllers/process.contro
 import { exportWithCaptions } from "../services/export.service.js";
 import { v4 as uuidv4 } from 'uuid';
 
+import { UPLOAD_DIR } from "../utils/storage.js";
+
 const router = express.Router();
 
 // Configure Multer for video uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = "src/uploads/";
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
+    // UPLOAD_DIR is already ensured by utils/storage.js
+    cb(null, UPLOAD_DIR);
   },
   filename: (req, file, cb) => {
     // Keep original extension
